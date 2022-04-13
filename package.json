@@ -1,0 +1,25 @@
+{
+  "name": "sticky-notes",
+  "version": "1.0.0",
+  "description": "Cloud course project",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/username-taken-512/sticky-notes.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/username-taken-512/sticky-notes/issues"
+  },
+  "homepage": "https://github.com/username-taken-512/sticky-notes#readme",
+  "dependencies": {
+    "express": "^4.17.3",
+    "pg": "^8.7.3"
+  }
+}
