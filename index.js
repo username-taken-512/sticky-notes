@@ -5,6 +5,9 @@ const PORT = process.env.PORT || 5000;
 const app = express();
 
 // API Routes
+const loginRouter = require('./backend/loginRouter');
+app.use('/api/users', loginRouter);
+
 const apiRouter = require('./backend/apiRouter');
 app.use('/api', apiRouter);
 
