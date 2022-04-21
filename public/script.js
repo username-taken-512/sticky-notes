@@ -6,16 +6,9 @@ getNotes().forEach((note) => {
   const saveButton = document.createElement("button");
   const deleteButton = document.createElement("button");
   const idNote = note.id;
-
-  initSaveButton(saveButton, idNote);
-  initDeleteButton(deleteButton, idNote);
-
   const noteElement = createNoteElement(idNote, note.content);
-  divForElement.setAttribute("id", "stickynote_div_" + idNote);
-  divForElement.appendChild(noteElement);
-  divForElement.appendChild(saveButton);
-  divForElement.appendChild(deleteButton);
 
+  initAppendButtons(saveButton, deleteButton, idNote, divForElement, noteElement);
   notesContainer.insertBefore(divForElement, addNoteButton);
 
   saveButton.addEventListener("click", () => {
@@ -42,7 +35,7 @@ function createNoteElement(id, content) {
 
   element.classList.add("note");
   element.value = content;
-  element.placeholder = "Empty Sticky Note";
+  element.placeholder = "Empty sticky note";
 
   element.addEventListener("input", () => {
     updateNote(id, element.value);
@@ -62,21 +55,13 @@ function addNote() {
     id: Math.floor(Math.random() * 100000),
     content: ""
   };
-
   const idNote = noteObject.id;
   const noteElement = createNoteElement(idNote, noteObject.content);
   const saveButton = document.createElement("button");
   const deleteButton = document.createElement("button");
   const divForElement = document.createElement("div");
 
-  initSaveButton(saveButton, idNote);
-  initDeleteButton(deleteButton, idNote);
-
-  divForElement.setAttribute("id", "stickynote_div_" + idNote);
-  divForElement.appendChild(noteElement);
-  divForElement.appendChild(saveButton);
-  divForElement.appendChild(deleteButton);
-
+  initAppendButtons(saveButton, deleteButton, idNote, divForElement, noteElement);
   notesContainer.insertBefore(divForElement, addNoteButton);
 
   saveButton.addEventListener("click", () => {
@@ -153,4 +138,14 @@ function deleteConfirm(id) {
   if (doDelete) {
     deleteNote(id);
   }
+}
+
+function initAppendButtons(saveButton, deleteButton, idNote, divForElement, noteElement) {
+  initSaveButton(saveButton, idNote);
+  initDeleteButton(deleteButton, idNote);
+
+  divForElement.setAttribute("id", "stickynote_div_" + idNote);
+  divForElement.appendChild(noteElement);
+  divForElement.appendChild(saveButton);
+  divForElement.appendChild(deleteButton);
 }
