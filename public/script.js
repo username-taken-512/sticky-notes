@@ -1,5 +1,6 @@
 const notesContainer = document.getElementById("app");
 const addNoteButton = notesContainer.querySelector(".add-note");
+const unSavedData = JSON.parse(localStorage.getItem("unsaved-sticky"));
 
 getNotes().forEach((note) => {
   const divForElement = document.createElement("div");
@@ -39,7 +40,12 @@ function createNoteElement(id, content) {
 
   element.addEventListener("input", () => {
     updateNote(id, element.value);
+    addToUnsaved(id);
     toggleSaveButton(id, "saveON");
+
+    // keep here
+    console.log(localStorage.getItem("unsaved-sticky"));
+
   });
 
   element.addEventListener("dblclick", () => {
@@ -53,7 +59,8 @@ function addNote() {
   const notes = getNotes();
   const noteObject = {
     id: Math.floor(Math.random() * 100000),
-    content: ""
+    content: "",
+    dbid: ""
   };
   const idNote = noteObject.id;
   const noteElement = createNoteElement(idNote, noteObject.content);
@@ -87,7 +94,7 @@ function updateNote(id, newContent) {
 function deleteNote(id) {
   const notes = getNotes().filter((note) => note.id != id);
   const divForElement = document.getElementById("stickynote_div_" + id);
-
+  removeFromUnsaved(id);
   saveNotes(notes);
   notesContainer.removeChild(divForElement);
 }
@@ -98,7 +105,6 @@ function toggleSaveButton(id, toggleTo) {
     case "saveON":
       saveButton.disabled = false;
       saveButton.className = "saveButtonON";
-      console.log("save button on");
       break;
     case "saveOFF":
       saveButton.disabled = true;
@@ -107,22 +113,33 @@ function toggleSaveButton(id, toggleTo) {
   }
 }
 
-function saveNotesPermanent(notes) {
-  // save to db here
+function saveNotesPermanent(note) {
+  console.log(note);
 }
 
 function saveButtonClicked(id) {
-  console.log("save clicked");
-  const notes = getNotes();
-  saveNotesPermanent(notes);
+  const note = getNotes().find(element => element.id === id);
+  saveNotesPermanent(note);
+  removeFromUnsaved(id);
   toggleSaveButton(id, "saveOFF");
+
+  console.log(localStorage.getItem("unsaved-sticky"));
+
 }
 
 function initSaveButton(saveButton, idNote) {
   saveButton.setAttribute("id", "stickynote_btn_" + idNote);
-  saveButton.disabled = true;
-  saveButton.className = "saveButtonOFF";
-  saveButton.innerHTML = "&#x1f4be";
+
+  if (unSavedData.includes(idNote)) {
+    saveButton.disabled = false;
+    saveButton.className = "saveButtonON";
+    saveButton.innerHTML = "&#x1f4be";
+  } else {
+    saveButton.disabled = true;
+    saveButton.className = "saveButtonOFF";
+    saveButton.innerHTML = "&#x1f4be";
+  }
+
 }
 
 function initDeleteButton(deleteButton, idNote) {
@@ -148,4 +165,18 @@ function initAppendButtons(saveButton, deleteButton, idNote, divForElement, note
   divForElement.appendChild(noteElement);
   divForElement.appendChild(saveButton);
   divForElement.appendChild(deleteButton);
+}
+
+function addToUnsaved(id) {
+  unSavedData.push(id);
+  localStorage.setItem("unsaved-sticky", JSON.stringify(unSavedData));
+}
+
+function removeFromUnsaved(id) {
+  for (var i = 0; i < unSavedData.length; i++) {
+    if (unSavedData[i] == id) {
+      unSavedData.splice(i, 1);
+    }
+  }
+  localStorage.setItem("unsaved-sticky", JSON.stringify(unSavedData));
 }
