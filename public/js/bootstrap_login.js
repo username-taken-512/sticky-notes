@@ -107,6 +107,7 @@ async function checkLoginStatus() {
             alert('Not logged in.');
             window.localStorage.setItem('accessToken', '');
             window.localStorage.setItem('accessToken', '');
+            window.location.href = "/login.html"
             break;
     }
 
