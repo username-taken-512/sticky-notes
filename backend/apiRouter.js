@@ -35,4 +35,29 @@ router.post('/note', async (req, res) => {
   res.json(await db.createNote(pool, note));
 });
 
+// Edit an existing note
+router.put('/note/:uuid', async (req, res) => {
+  let note = {
+    uuid: req.params.uuid,
+    color: req.body.color,
+    body: req.body.body,
+    date_due: req.body.dateDue || null,
+    date_done: req.body.dateDone || null
+  }
+  const result = await db.updateNote(pool, note, req.user.id);
+
+  // If result.results is empty, no row has been modified
+  if (result.results === undefined) { res.status(304); };
+  res.json(result);
+});
+
+// Delete an existing note
+router.delete('/note/:uuid', async (req, res) => {
+  const result = await db.deleteNote(pool, req.params.uuid, req.user.id);
+
+  // If result.results is empty, no row has been modified
+  if (result.results === undefined) { res.status(304); };
+  res.json(result);
+});
+
 module.exports = router;
