@@ -42,10 +42,6 @@ function createNoteElement(id, content) {
     updateNote(id, element.value);
     addToUnsaved(id);
     toggleSaveButton(id, "saveON");
-
-    // keep here
-    console.log(localStorage.getItem("unsaved-sticky"));
-
   });
 
   element.addEventListener("dblclick", () => {
@@ -122,9 +118,6 @@ function saveButtonClicked(id) {
   saveNotesPermanent(note);
   removeFromUnsaved(id);
   toggleSaveButton(id, "saveOFF");
-
-  console.log(localStorage.getItem("unsaved-sticky"));
-
 }
 
 function initSaveButton(saveButton, idNote) {
