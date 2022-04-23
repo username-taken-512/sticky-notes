@@ -52,7 +52,8 @@ async function updateUserRefreshToken(pool, userId, refreshToken) {
 
 // Get all notes for a user
 async function getNotes(pool, userId) {
-  const text = `SELECT * FROM notes WHERE user_id = $1`;
+  const text = `SELECT uuid, color, body, date_created, date_due, date_done
+                FROM notes WHERE user_id = $1`;
   const values = [userId];
 
   return await runQuery(pool, text, values, false);
@@ -64,6 +65,27 @@ async function createNote(pool, note) {
                 VALUES ($1, $2, $3, $4)
                 RETURNING *`;
   const values = [note.color, note.body, note.dateCreated, note.userId];
+  return await runQuery(pool, text, values, true);
+}
+
+// Update an existing note
+async function updateNote(pool, note, userId) {
+  const text = `UPDATE notes 
+                SET color = $3, body = $4, date_due = $5, date_done = $6
+                WHERE uuid = $1 AND user_id = $2
+                RETURNING *`;
+  const values = [note.uuid, userId, note.color, note.body, note.dateDue, note.dateDone];
+  result = await runQuery(pool, text, values, true);
+  if (result.id) { delete result.id }
+  return result;
+}
+
+// Delete an existing note
+async function deleteNote(pool, noteUuid, userId) {
+  const text = `DELETE FROM notes
+                WHERE uuid = $1 AND user_id = $2
+                RETURNING uuid`;
+  const values = [noteUuid, userId];
   return await runQuery(pool, text, values, true);
 }
 
@@ -94,5 +116,7 @@ module.exports = {
   getUser: getUser,
   updateUserRefreshToken: updateUserRefreshToken,
   getNotes: getNotes,
-  createNote: createNote
+  createNote: createNote,
+  updateNote: updateNote,
+  deleteNote: deleteNote
 };
