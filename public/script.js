@@ -115,7 +115,7 @@ function toggleSaveButton(id, toggleTo) {
 }
 
 function saveNotesPermanent(note) {
-  console.log(note);
+  // save to db here
 }
 
 function saveButtonClicked(id) {
@@ -123,7 +123,7 @@ function saveButtonClicked(id) {
   saveNotesPermanent(note);
   removeFromUnsaved(id);
   toggleSaveButton(id, "saveOFF");
-  //removeLocalNote(id); avkommentera efter db fixat
+  removeLocalNote(id);
 }
 
 function initSaveButton(saveButton, idNote) {
