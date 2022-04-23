@@ -87,6 +87,11 @@ function updateNote(id, newContent) {
   saveNotes(notes);
 }
 
+function removeLocalNote(id) {
+  const notes = getNotes().filter((note) => note.id != id);
+  saveNotes(notes);
+}
+
 function deleteNote(id) {
   const notes = getNotes().filter((note) => note.id != id);
   const divForElement = document.getElementById("stickynote_div_" + id);
@@ -118,6 +123,7 @@ function saveButtonClicked(id) {
   saveNotesPermanent(note);
   removeFromUnsaved(id);
   toggleSaveButton(id, "saveOFF");
+  //removeLocalNote(id); avkommentera efter db fixat
 }
 
 function initSaveButton(saveButton, idNote) {
