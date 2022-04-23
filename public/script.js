@@ -1,6 +1,6 @@
 const notesContainer = document.getElementById("app");
 const addNoteButton = notesContainer.querySelector(".add-note");
-const unSavedData = JSON.parse(localStorage.getItem("unsaved-sticky"));
+let unSavedData = JSON.parse(localStorage.getItem("unsaved-sticky"));
 
 getNotes().forEach((note) => {
   const divForElement = document.createElement("div");
@@ -130,22 +130,19 @@ function saveButtonClicked(id) {
 function initSaveButton(saveButton, idNote) {
   saveButton.setAttribute("id", "stickynote_btn_" + idNote);
 
-  if (!!unSavedData) {
-    if (unSavedData.includes(idNote)) {
-      saveButton.disabled = false;
-      saveButton.className = "saveButtonON";
-      saveButton.innerHTML = "&#x1f4be";
-    } else {
-      saveButton.disabled = true;
-      saveButton.className = "saveButtonOFF";
-      saveButton.innerHTML = "&#x1f4be";
-    }
-  } else {
+  if (unSavedData == null) {
+    unSavedData = [];
+  }
+
+  if (unSavedData.includes(idNote)) {
     saveButton.disabled = false;
     saveButton.className = "saveButtonON";
     saveButton.innerHTML = "&#x1f4be";
+  } else {
+    saveButton.disabled = true;
+    saveButton.className = "saveButtonOFF";
+    saveButton.innerHTML = "&#x1f4be";
   }
-
 
 }
 
@@ -175,8 +172,10 @@ function initAppendButtons(saveButton, deleteButton, idNote, divForElement, note
 }
 
 function addToUnsaved(id) {
-  unSavedData.push(id);
-  localStorage.setItem("unsaved-sticky", JSON.stringify(unSavedData));
+  if (unSavedData != null && !unSavedData.includes(id)) {
+    unSavedData.push(id);
+    localStorage.setItem("unsaved-sticky", JSON.stringify(unSavedData));
+  }
 }
 
 function removeFromUnsaved(id) {
