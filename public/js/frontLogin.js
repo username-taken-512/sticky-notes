@@ -11,7 +11,7 @@ document.getElementById('logout-button').addEventListener('click', async (event)
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        token: (window.sessionStorage.getItem('refreshToken') || '')
+        token: (window.localStorage.getItem('refreshToken') || '')
       })
     }));
   } catch (error) {
@@ -19,8 +19,8 @@ document.getElementById('logout-button').addEventListener('click', async (event)
   }
 
   // Clear tokens
-  window.sessionStorage.setItem('refreshToken', '');
-  window.sessionStorage.setItem('accessToken', '');
+  window.localStorage.setItem('refreshToken', '');
+  window.localStorage.setItem('accessToken', '');
 
   clearInterval(refreshInterval); // Stop refreshing tokens
   alert('Logged out');
@@ -62,8 +62,8 @@ async function login(username, password) {
     case 200:
       alert('Login succesful');
       // Store tokens
-      window.sessionStorage.setItem('accessToken', result.accessToken);
-      window.sessionStorage.setItem('refreshToken', result.refreshToken);
+      window.localStorage.setItem('accessToken', result.accessToken);
+      window.localStorage.setItem('refreshToken', result.refreshToken);
 
       // Continiously refresh tokens while on page
       refreshInterval = setInterval(() => {
@@ -75,7 +75,7 @@ async function login(username, password) {
 
 // ### Token management
 // Get stored auth token
-function getAccessToken() { return window.sessionStorage.getItem('accessToken') || null }
+function getAccessToken() { return window.localStorage.getItem('accessToken') || null }
 
 // Refresh access token & store locally
 async function refreshToken() {
@@ -86,7 +86,7 @@ async function refreshToken() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        token: window.sessionStorage.getItem('refreshToken')
+        token: window.localStorage.getItem('refreshToken')
       })
     })).json();
   } catch (error) {
@@ -94,7 +94,7 @@ async function refreshToken() {
   }
 
   if (response.status === 200) {
-    window.sessionStorage.setItem('accessToken', result.accessToken);
+    window.localStorage.setItem('accessToken', result.accessToken);
   }
 }
 
@@ -137,3 +137,41 @@ async function register(username, password, firstName, lastName) {
       break;
   }
 }
+
+async function checkLoginStatus() {
+
+  console.log(window.localStorage.getItem('refreshToken'))
+
+  if (!window.localStorage.getItem('refreshToken')) return;
+
+  try {
+    result = await (response = await fetch('/api/users/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        token: window.localStorage.getItem('refreshToken')
+      })
+    })).json();
+  } catch (error) {
+    console.log(error);
+  }
+
+  switch (response.status) {
+    case 200:
+      window.localStorage.setItem('accessToken', result.accessToken);
+      alert('Logged in')
+      break;
+
+    case 500:
+      alert('General error');
+      break;
+    case 403:
+      alert('Not logged in.');
+      window.localStorage.setItem('accessToken', '');
+      window.localStorage.setItem('accessToken', '');
+      break;
+  }
+
+}
+
+checkLoginStatus();
