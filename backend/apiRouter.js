@@ -23,4 +23,16 @@ router.get('/note', async (req, res) => {
   res.json(await db.getNotes(pool, req.user.id));
 });
 
+// Create new note
+router.post('/note', async (req, res) => {
+  let date = new Date().toLocaleString("sv-SE", { timeZone: "Europe/Stockholm" });
+  let note = {
+    color: req.body.color,
+    body: req.body.body,
+    dateCreated: date.substring(0, 16),
+    userId: req.user.id
+  }
+  res.json(await db.createNote(pool, note));
+});
+
 module.exports = router;

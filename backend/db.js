@@ -58,6 +58,14 @@ async function getNotes(pool, userId) {
   return await runQuery(pool, text, values, false);
 }
 
+// Create a new note
+async function createNote(pool, note) {
+  const text = `INSERT INTO notes (color, body, date_created, user_id)
+                VALUES ($1, $2, $3, $4)
+                RETURNING *`;
+  const values = [note.color, note.body, note.dateCreated, note.userId];
+  return await runQuery(pool, text, values, true);
+}
 
 // Runs the query in db
 async function runQuery(pool, text, values, singleResult = false) {
@@ -85,5 +93,6 @@ module.exports = {
   createUser: createUser,
   getUser: getUser,
   updateUserRefreshToken: updateUserRefreshToken,
-  getNotes: getNotes
+  getNotes: getNotes,
+  createNote: createNote
 };
