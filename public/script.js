@@ -130,15 +130,22 @@ function saveButtonClicked(id) {
 function initSaveButton(saveButton, idNote) {
   saveButton.setAttribute("id", "stickynote_btn_" + idNote);
 
-  if (unSavedData.includes(idNote)) {
+  if (!!unSavedData) {
+    if (unSavedData.includes(idNote)) {
+      saveButton.disabled = false;
+      saveButton.className = "saveButtonON";
+      saveButton.innerHTML = "&#x1f4be";
+    } else {
+      saveButton.disabled = true;
+      saveButton.className = "saveButtonOFF";
+      saveButton.innerHTML = "&#x1f4be";
+    }
+  } else {
     saveButton.disabled = false;
     saveButton.className = "saveButtonON";
     saveButton.innerHTML = "&#x1f4be";
-  } else {
-    saveButton.disabled = true;
-    saveButton.className = "saveButtonOFF";
-    saveButton.innerHTML = "&#x1f4be";
   }
+
 
 }
 
