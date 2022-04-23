@@ -24,7 +24,7 @@ const pool = getDbPool();
 
 // Returns user info
 router.get('/', authenticateToken, async (req, res) => {
-  const user = (await db.getUser(pool, req.user.username)).results || null;
+  const user = (await db.getUser(pool, req.user.username)) || null;
   if (user.password) { delete user.password; } // Delete password before sending
   res.json(user);
 });
@@ -58,7 +58,7 @@ router.post('/', async (req, res) => {
 // Login - Sends accessToken and refreshToken
 router.post('/login', async (req, res) => {
   // Get user from database
-  const user = (await db.getUser(pool, req.body.username)).results || null;
+  const user = (await db.getUser(pool, req.body.username)) || null;
 
   // If user doesn't exist
   if (user === null) {

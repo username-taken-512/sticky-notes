@@ -12,19 +12,6 @@ function getDbPool() {
   return pool;
 }
 
-async function dbTest(pool) {
-  try {
-    const client = await pool.connect();
-    const result = await client.query('SELECT * FROM users');
-    const results = { 'results': (result) ? result.rows : null };
-    client.release();
-    return results;
-  } catch (error) {
-    console.error(error);
-    return { _error: 'error' };
-  }
-}
-
 // Create new user
 async function createUser(pool, user) {
   const text = `INSERT INTO users (username, password, first_name, last_name) 
@@ -52,7 +39,7 @@ async function updateUserRefreshToken(pool, userId, refreshToken) {
 
 // Get all notes for a user
 async function getNotes(pool, userId) {
-  const text = `SELECT uuid, color, body, date_created, date_due, date_done
+  const text = `SELECT uuid, content, date_created, date_due, date_done
                 FROM notes WHERE user_id = $1`;
   const values = [userId];
 
@@ -61,22 +48,22 @@ async function getNotes(pool, userId) {
 
 // Create a new note
 async function createNote(pool, note) {
-  const text = `INSERT INTO notes (color, body, date_created, user_id)
-                VALUES ($1, $2, $3, $4)
-                RETURNING *`;
-  const values = [note.color, note.body, note.dateCreated, note.userId];
+  const text = `INSERT INTO notes (content, date_created, user_id)
+                VALUES ($1, $2, $3)
+                RETURNING uuid, content, date_created`;
+  const values = [note.content, note.dateCreated, note.userId];
   return await runQuery(pool, text, values, true);
 }
 
 // Update an existing note
 async function updateNote(pool, note, userId) {
   const text = `UPDATE notes 
-                SET color = $3, body = $4, date_due = $5, date_done = $6
+                SET content = $3, date_due = $4, date_done = $5
                 WHERE uuid = $1 AND user_id = $2
-                RETURNING *`;
-  const values = [note.uuid, userId, note.color, note.body, note.dateDue, note.dateDone];
+                RETURNING uuid, content, date_created, date_due, date_done`;
+  const values = [note.uuid, userId, note.content, note.dateDue, note.dateDone];
   result = await runQuery(pool, text, values, true);
-  if (result.id) { delete result.id }
+
   return result;
 }
 
@@ -97,9 +84,9 @@ async function runQuery(pool, text, values, singleResult = false) {
 
     let results;
     if (singleResult) {
-      results = { 'results': (result) ? result.rows[0] : null };
+      results = (result) ? result.rows[0] : null;
     } else {
-      results = { 'results': (result) ? result.rows : null };
+      results = (result) ? result.rows : null;
     }
     client.release();
     return results;
@@ -111,7 +98,6 @@ async function runQuery(pool, text, values, singleResult = false) {
 
 module.exports = {
   getDbPool: getDbPool,
-  dbTest: dbTest,
   createUser: createUser,
   getUser: getUser,
   updateUserRefreshToken: updateUserRefreshToken,
