@@ -136,15 +136,21 @@ function toggleSaveButton(id, toggleTo) {
   }
 }
 
-function saveNoteToCloud(note) {
-  console.log(!!note.uuid);
-  // todo save to cloud
-  // check if note has uuid, else post a new note
+async function saveNoteToCloud(note) {
+  let result;
+  if (!!note.uuid) {
+    result = await updateNoteInDb(note);
+  } else {
+    result = await postNoteToDb(note);
+  }
+  console.log(result);
+  // returnera resultatet så det kan användas i saveButtonClicked()
 }
 
 function saveButtonClicked(id) {
   const note = getLocalNotes().find(element => element.id === id);
   saveNoteToCloud(note);
+  // kolla härefter som det lyckades innan du kör resterande metoder
   removeFromUnsaved(id);
   toggleSaveButton(id, "saveOFF");
   removeLocalNote(id);
