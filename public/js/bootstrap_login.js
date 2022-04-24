@@ -46,7 +46,7 @@ async function login(username, password) {
             // Continiously refresh tokens while on page
             refreshInterval = setInterval(() => {
                 refreshToken();
-            }, 5000);
+            }, 1800000);
             break;
     }
 }
