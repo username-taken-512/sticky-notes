@@ -98,10 +98,12 @@ async function updateNote(id, newContent) {
   let notesLocal = getLocalNotes();
   let targetNote = notesLocal.filter((note) => note.id == id)[0];
   if (targetNote == null) {
+    console.log('if')
     targetNote = cloudNotes.filter((note) => note.id == id)[0];
     targetNote.content = newContent;
     notesLocal.push(targetNote);
   } else {
+    console.log('else')
     targetNote.content = newContent;
   }
   saveNotes(notesLocal);
@@ -112,13 +114,31 @@ function removeLocalNote(id) {
   saveNotes(notes);
 }
 
-// Deletes a note from the local storage
-function deleteNote(id) {
-  const notes = getLocalNotes().filter((note) => note.id != id);
-  const divForElement = document.getElementById("stickynote_div_" + id);
-  removeFromUnsaved(id);
-  saveNotes(notes);
-  notesContainer.removeChild(divForElement);
+// Deletes a note from the local- and cloud storage
+async function deleteNote(id) {
+  let result;
+  let method = 0;
+  for (var i = 0; i < cloudNotes.length; i++) {
+    if (cloudNotes[i].id === id) {
+      method = 1;
+      result = await deleteNoteInDb(cloudNotes[i]);
+      break;
+    }
+  }
+  if (method === 1 && !(!!result._error)) {
+    innerDeleteFromLocal();
+  } else if (method === 1 && !!result._error) {
+    alert("There was an error deleting the note. Try logging in agaon or check internet connection.");
+  } else if (method === 0) {
+    innerDeleteFromLocal();
+  }
+  function innerDeleteFromLocal() {
+    const notes = getLocalNotes().filter((note) => note.id != id);
+    const divForElement = document.getElementById("stickynote_div_" + id);
+    removeFromUnsaved(id);
+    saveNotes(notes);
+    notesContainer.removeChild(divForElement);
+  }
 }
 
 // Toggles the save button disabled/enabled 
@@ -142,18 +162,25 @@ async function saveNoteToCloud(note) {
     result = await updateNoteInDb(note);
   } else {
     result = await postNoteToDb(note);
+    if (!(!!result._error)) {
+      note.uuid = result.uuid;
+      // sätt date här med?
+      cloudNotes.push(note);
+    }
   }
-  console.log(result);
-  // returnera resultatet så det kan användas i saveButtonClicked()
+  return result;
 }
 
-function saveButtonClicked(id) {
+async function saveButtonClicked(id) {
   const note = getLocalNotes().find(element => element.id === id);
-  saveNoteToCloud(note);
-  // kolla härefter som det lyckades innan du kör resterande metoder
-  removeFromUnsaved(id);
-  toggleSaveButton(id, "saveOFF");
-  removeLocalNote(id);
+  const result = await saveNoteToCloud(note);
+  if (!(!!result._error)) {
+    removeFromUnsaved(id);
+    toggleSaveButton(id, "saveOFF");
+    removeLocalNote(id);
+  } else {
+    alert("Note could not be saved to cloud. Try logging in again or check internet connection.");
+  }
 }
 
 // Initiates the save button and checks wether it should be enabled/disabled
