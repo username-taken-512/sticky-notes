@@ -1,4 +1,23 @@
-function getAccessToken() { return window.localStorage.getItem('accessToken') || null }
+function getAccessToken() { return window.localStorage.getItem('accessToken') || null; }
+
+function getUserId() {
+  return parseJwt(getAccessToken()).id || 0;
+}
+
+function getUserName() {
+  return parseJwt(getAccessToken()).username || null;
+}
+
+// Returns an object of the JWT payload ( Source: https://stackoverflow.com/questions/38552003/how-to-decode-jwt-token-in-javascript-without-using-a-library )
+function parseJwt(token) {
+  var base64Url = token.split('.')[1];
+  var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  var jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+
+  return JSON.parse(jsonPayload);
+};
 
 // ### Database interaction
 
@@ -17,7 +36,7 @@ function generateReturn(responseStatus, result) {
 }
 
 // Get notes from db
-async function getNotesFromDb() {
+async function getNotesFromDb(runAgain = true) {
   let response;
   let result;
   try {
@@ -32,6 +51,14 @@ async function getNotesFromDb() {
     console.log(error);
     return { _error: error, _errorCode: 666 }
   }
+
+  // If auth error, get new access token, then try again - once
+  if (response.status !== 200 && runAgain) {
+    console.log('retry-grejen', response.status, runAgain);
+    await checkLoginStatus();
+    return getNotesFromDb(false);
+  }
+
   return generateReturn(response.status, result);
 }
 

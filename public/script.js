@@ -1,6 +1,6 @@
 const notesContainer = document.getElementById("app");
 const addNoteButton = notesContainer.querySelector(".add-note");
-let unSavedData = JSON.parse(localStorage.getItem("unsaved-sticky"));
+let unSavedData = JSON.parse(localStorage.getItem(getUserId() + "-unsaved-sticky"));
 let cloudNotes;
 
 // Fetches all notes from DB and renders to HTML page
@@ -31,11 +31,12 @@ function renderNoteHTML(note) {
 }
 
 function getLocalNotes() {
-  return JSON.parse(localStorage.getItem("stickynotes-notes") || "[]");
+  return JSON.parse(localStorage.getItem(getUserId() + "-stickynotes-notes") || "[]");
 }
 
 async function getCloudNotes() {
   const cloudNotes = await getNotesFromDb();
+  console.log(cloudNotes);
   let cloudNotesReturn = [];
   cloudNotes.forEach((note) => {
     const noteObject = getEmptyNoteObject();
@@ -52,7 +53,7 @@ async function getCloudNotes() {
 
 // Saves an array of notes to the local storage 
 function saveNotes(notes) {
-  localStorage.setItem("stickynotes-notes", JSON.stringify(notes));
+  localStorage.setItem(getUserId() + "-stickynotes-notes", JSON.stringify(notes));
 }
 
 // Creates the needed HTML elements for the actualy sticky note
@@ -128,7 +129,7 @@ async function deleteNote(id) {
   if (method === 1 && !(!!result._error)) {
     innerDeleteFromLocal();
   } else if (method === 1 && !!result._error) {
-    alert("There was an error deleting the note. Try logging in agaon or check internet connection.");
+    alert("There was an error deleting the note. Try logging in again or check internet connection.");
   } else if (method === 0) {
     innerDeleteFromLocal();
   }
@@ -231,7 +232,7 @@ function initAppendButtons(saveButton, deleteButton, idNote, divForElement, note
 function addToUnsaved(id) {
   if (unSavedData != null && !unSavedData.includes(id)) {
     unSavedData.push(id);
-    localStorage.setItem("unsaved-sticky", JSON.stringify(unSavedData));
+    localStorage.setItem(getUserId() + "-unsaved-sticky", JSON.stringify(unSavedData));
   }
 }
 
@@ -242,7 +243,7 @@ function removeFromUnsaved(id) {
       unSavedData.splice(i, 1);
     }
   }
-  localStorage.setItem("unsaved-sticky", JSON.stringify(unSavedData));
+  localStorage.setItem(getUserId() + "-unsaved-sticky", JSON.stringify(unSavedData));
 }
 
 function getEmptyNoteObject() {
