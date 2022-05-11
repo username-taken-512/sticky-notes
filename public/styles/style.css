@@ -1,6 +1,8 @@
 body {
-  margin: 0;
-  background: #009578;
+  margin: 0 auto;
+  background: #ffffff;
+  width: 50%;
+  
 }
 
 .hidden {
@@ -15,8 +17,9 @@ body {
 }
 
 #top{
-  display:flex;
-  background-color: blue;
+  display: flex;
+  background-color: rgb(200, 200, 201);
+  justify-content: space-between;
 }
 
 .note {
@@ -171,11 +174,15 @@ body {
 }
 
 #logout-button{
-    background-color: #4CAF50; /* Green */
-    border: none;
-    color: white;
-    padding: 15px 32px;
+    border: 5px black;
+    size: 5px;
+    width: 10%;
+    color: black,;
     text-align: center;
     font-size: 16px;
-    float:right;
-  }
+   }
+
+#logout-button:hover{
+    background-color: blue;
+    cursor: pointer;
+   }
