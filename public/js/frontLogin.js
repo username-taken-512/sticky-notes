@@ -22,13 +22,10 @@ document.getElementById('logout-button').addEventListener('click', async (event)
   window.localStorage.setItem('refreshToken', '');
   window.localStorage.setItem('accessToken', '');
 
-  clearInterval(refreshInterval); // Stop refreshing tokens
-  alert('Logged out. Please don\'t press the back button in your web browser and close the tab for secruity reasons.');
+  clearInterval(refreshInterval); // Stop refreshing token
   window.location.replace("/login.html")
 });
 async function checkLoginStatus() {
-
-  console.log("hej")
 
   console.log(window.localStorage.getItem('refreshToken'))
 
@@ -49,7 +46,6 @@ async function checkLoginStatus() {
   switch (response.status) {
     case 200:
       window.localStorage.setItem('accessToken', result.accessToken);
-      alert('Logged in')
       break;
 
     case 500:
