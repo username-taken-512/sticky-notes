@@ -36,7 +36,6 @@ async function login(username, password) {
             alert('General error');
             break;
         case 200:
-            alert('Login succesful');
             // Store tokens
             window.localStorage.setItem('accessToken', result.accessToken);
             window.localStorage.setItem('refreshToken', result.refreshToken);
