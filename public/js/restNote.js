@@ -122,3 +122,55 @@ async function deleteNoteInDb(note) {
   }
   return generateReturn(response.status, result);
 }
+
+// Get Notes summary statistics
+async function getNotesSummaryFromDb(runAgain = true) {
+  let response;
+  let result;
+  try {
+    result = await (response = await fetch('/api/notes/summary', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + getAccessToken()
+      }
+    })).json();
+  } catch (error) {
+    console.log(error);
+    return { _error: error, _errorCode: 666 }
+  }
+
+  // If auth error, get new access token, then try again - once
+  if (response.status !== 200 && runAgain) {
+    console.log('retry-grejen', response.status, runAgain);
+    await checkLoginStatus();
+    return getNotesSummaryFromDb(false);
+  }
+  return generateReturn(response.status, result);
+}
+
+// Get Website visitor statistics
+async function getWebsiteStatistics(runAgain = true) {
+  let response;
+  let result;
+  try {
+    result = await (response = await fetch('/api/statistics', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + getAccessToken()
+      }
+    })).json();
+  } catch (error) {
+    console.log(error);
+    return { _error: error, _errorCode: 666 }
+  }
+
+  // If auth error, get new access token, then try again - once
+  if (response.status !== 200 && runAgain) {
+    console.log('retry-grejen', response.status, runAgain);
+    await checkLoginStatus();
+    return getWebsiteStatistics(false);
+  }
+  return generateReturn(response.status, result);
+}

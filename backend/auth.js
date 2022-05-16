@@ -5,7 +5,8 @@ require('dotenv').config();
 
 // Authentication middleware
 function authenticateToken(req, res, next) {
-  const authHeader = req.headers['authorization'];
+  // Get token from header or from parameter
+  const authHeader = req.headers['authorization'] || 'Bearer ' + req.query.token;
   // Header format: 'Bearer [token]' (example: 'Bearer DFQ512112DFSDFASFWEFG123123SDFSADF')
   const token = authHeader && authHeader.split(' ')[1]; // Get only the [token] part
 

@@ -275,3 +275,10 @@ async function getAllNotes() {
   Array.prototype.push.apply(localNotes, cloudNotes);
   return localNotes;
 }
+
+// Test to show statistics fetched from backend
+async function test() {
+  console.log(await getNotesSummaryFromDb());
+  console.log(await getWebsiteStatistics());
+}
+test();
