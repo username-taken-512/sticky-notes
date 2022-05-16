@@ -76,6 +76,15 @@ async function deleteNote(pool, noteUuid, userId) {
   return await runQuery(pool, text, values, true);
 }
 
+// Get notes summary statistics for the user
+async function getNotesSummary(pool, userId) {
+  const text = `SELECT *
+                FROM vw_notes_summary_per_user WHERE user_id = $1`;
+  const values = [userId];
+
+  return await runQuery(pool, text, values, true);
+}
+
 // Runs the query in db
 async function runQuery(pool, text, values, singleResult = false) {
   try {
@@ -104,5 +113,6 @@ module.exports = {
   getNotes: getNotes,
   createNote: createNote,
   updateNote: updateNote,
-  deleteNote: deleteNote
+  deleteNote: deleteNote,
+  getNotesSummary: getNotesSummary
 };

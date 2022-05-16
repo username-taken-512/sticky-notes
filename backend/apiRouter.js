@@ -13,6 +13,10 @@ const auth = require('./auth');
 const authenticateToken = auth.authenticateToken;
 router.use(authenticateToken);
 
+// For GA Reporting API interaction
+const ga = require('./gaReporting');
+const getVisitorData30Days = ga.getVisitorData30Days;
+
 router.get('/notes', async (req, res) => {
   res.json(await db.getNotes(pool, req.user.id));
 });
@@ -50,6 +54,31 @@ router.delete('/notes/:uuid', async (req, res) => {
   // If result is empty, no row has been modified
   if (result === undefined) { res.status(304); };
   res.json(result);
+});
+
+// Returns notes summary statistics for the user
+router.get('/notes/summary', async (req, res) => {
+  res.json(await db.getNotesSummary(pool, req.user.id));
+});
+
+// Returns GA site statistics - all
+router.get('/statistics', async (req, res) => {
+  res.json(await getVisitorData30Days());
+});
+
+// Returns GA site statistics - browsers
+router.get('/statistics/browsers', async (req, res) => {
+  // 'dimensions': 'ga:deviceCategory,ga:operatingSystem,ga:browser,ga:browserVersion,ga:region,ga:language'
+  const data = await getVisitorData30Days();
+  let processedData = {};
+
+  data.forEach(element => {
+    if (!processedData[element[2]]) {
+      processedData[element[2]] = parseInt(0);
+    }
+    processedData[element[2]] += parseInt(element[6]);
+  });
+  res.json(processedData);
 });
 
 module.exports = router;
