@@ -8,7 +8,7 @@ const viewId = process.env.GA_VIEW_ID;
 let gaJwt = new google.auth.JWT(
   process.env.GA_CLIENT_EMAIL,
   null,
-  process.env.GA_PRIVATE_KEY,
+  process.env.GA_PRIVATE_KEY.replace(/\\n/gm, '\n'),
   scopes
 );
 
