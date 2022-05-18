@@ -7,13 +7,16 @@ document.getElementById('logout-button').addEventListener('click', async (event)
 
   // Notify server of logout
   try {
-    result = await (response = await fetch('/api/users/login', {
+    result = (response = await fetch('/api/users/login', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         token: (window.localStorage.getItem('refreshToken') || '')
       })
-    }));
+    }))
+
+    window.localStorage.setItem(userid + "-stickynotes-notes", '');
+
   } catch (error) {
     console.log(error);
   }
@@ -25,6 +28,8 @@ document.getElementById('logout-button').addEventListener('click', async (event)
   clearInterval(refreshInterval); // Stop refreshing token
   window.location.replace("/login.html")
 });
+
+
 async function checkLoginStatus() {
 
   console.log(window.localStorage.getItem('refreshToken'))

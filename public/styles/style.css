@@ -186,3 +186,10 @@ body {
     background-color: blue;
     cursor: pointer;
    }
+
+label{
+
+  font-size: 14px;
+  margin-left: 3px;
+
+}
