@@ -17,11 +17,11 @@ body {
 #app {
   display: grid;
   justify-content: center;
-  grid-template-columns: repeat(auto-fill, 232px);
+  grid-template-columns: repeat(auto-fill, 316px);
   column-gap: 4px;
   row-gap: 24px;
   padding: 24px;
-  max-width: 800px;
+  max-width: 1050px;
   min-width: 400px;
   margin: 0 auto;
 }
@@ -34,6 +34,7 @@ body {
 
 .note {
   height: 200px;
+  width: 300px;
   box-sizing: border-box;
   padding: 16px;
   border: 4 solid #e2e8f0;
@@ -46,6 +47,7 @@ body {
 
 .add-note {
   height: 200px;
+  width: 300px;
   border: none;
   outline: none;
   background: rgba(0, 0, 0, 0.1);
