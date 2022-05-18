@@ -12,24 +12,40 @@
     gtag('config', 'G-2FCEYVY3G7');
   </script>
 
+  <!-- Apex Charts - For graphs -->
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sticky Notes</title>
-  <link rel="stylesheet" href="styles/style.css">
+  <link rel="stylesheet" type="text/css" href="styles/style.css">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 
 <body>
   <div id="top">
     <h1>Sticky Notes BETA</h1>
-    <button id="logout-button">Log out</button>
+    <span class="buttons">
+      <button id="userstats-button" class="top-button">User stats<button id="sitestats-button" class="top-button">Site
+          stats</button><button id="logout-button" class="top-button">Log out</button>
+    </span>
   </div>
 
 
   <div id="app">
     <button class="add-note" type="button">+</button>
   </div>
+
+  <!-- Modal - Invisible by default -->
+  <div id="modal" class="modal">
+    <div class="modal-container">
+      <span id="modal-close-button" class="close">&times;</span>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+  <script src="/js/modal.js"></script>
   <script src="/js/frontLogin.js"></script>
   <script src="/js/restNote.js"></script>
   <script src="script.js"></script>

@@ -1,8 +1,13 @@
+@import url("/styles/modal.css");
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 body {
-  margin: 0 auto;
   background: #ffffff;
-  width: 50%;
-  
 }
 
 .hidden {
@@ -11,12 +16,17 @@ body {
 
 #app {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 200px);
+  justify-content: center;
+  grid-template-columns: repeat(auto-fill, 232px);
+  column-gap: 4px;
+  row-gap: 24px;
   padding: 24px;
-  gap: 24px;
+  max-width: 800px;
+  min-width: 400px;
+  margin: 0 auto;
 }
 
-#top{
+#top {
   display: flex;
   background-color: rgb(200, 200, 201);
   justify-content: space-between;
@@ -173,23 +183,36 @@ body {
   color: #fff;
 }
 
-#logout-button{
-    border: 5px black;
-    size: 5px;
-    width: 10%;
-    color: black,;
-    text-align: center;
-    font-size: 16px;
-   }
+.top-button {
+  border: 5px black;
+  height: 100%;
+  color: black;
+  text-align: center;
+  font-size: 16px;
+  padding: 16px 12px;
+}
 
-#logout-button:hover{
-    background-color: blue;
-    cursor: pointer;
-   }
+.top-button:hover {
+  background-color: blue;
+  cursor: pointer;
+}
 
-label{
-
+label {
   font-size: 14px;
   margin-left: 3px;
+}
 
+@media screen and (max-width: 600px) {
+  .buttons {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .top-button {
+    flex-grow: 1;
+  }
+
+  #top {
+    flex-direction: column;
+  }
 }
