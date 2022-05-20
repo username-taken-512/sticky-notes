@@ -4,8 +4,8 @@ const addNoteButton = notesContainer.querySelector(".add-note");
 let unSavedData = JSON.parse(localStorage.getItem(getUserId() + "-unsaved-sticky"));
 let cloudNotes;
 
-notesContainer.setAttribute("display", "grid");
-headerContainer.setAttribute("display", "flex");
+notesContainer.setAttribute("style", "display: grid;");
+headerContainer.setAttribute("style", "display: flex;");
 
 // Fetches all notes from DB and renders to HTML page
 async function fetchAndRenderAllNotes() {
