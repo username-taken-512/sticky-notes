@@ -15,7 +15,8 @@ body {
 }
 
 #app {
-  display: grid;
+  display: none;
+  /* display: grid;*/  
   justify-content: center;
   grid-template-columns: repeat(auto-fill, 316px);
   column-gap: 4px;
@@ -27,7 +28,8 @@ body {
 }
 
 #top {
-  display: flex;
+  display: none;
+  /* display: flex; */
   background-color: rgb(200, 200, 201);
   justify-content: space-between;
 }
