@@ -24,6 +24,7 @@
 </head>
 
 <body>
+  <script src="/js/frontLogin.js"></script>
   <div id="top">
     <h1>Sticky Notes BETA</h1>
     <span class="buttons">
@@ -46,9 +47,30 @@
   </div>
 
   <script src="/js/modal.js"></script>
-  <script src="/js/frontLogin.js"></script>
   <script src="/js/restNote.js"></script>
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
+  <script src="/js/logout.js"></script>
+
+  <div class="datetimepicker">
+    <input type="date" id="date" placeholder="2014-09-08">
+    <span></span>
+    <input type="time" id="time" value="08:00">
+  </div>
+
+  <script>
+
+var dateEl = document.getElementById('date');
+var timeEl = document.getElementById('time');
+
+let selectedDate;
+
+document.getElementById('date').addEventListener('input', function(){
+  
+  selectedDate = this.value;
+  console.log(selectedDate);});
+
+  </script>
+
 </body>
 
 </html>
