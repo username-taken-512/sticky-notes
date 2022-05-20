@@ -16,7 +16,7 @@ body {
 
 #app {
   display: none;
-  /* display: grid;*/  
+  /* display: grid;*/
   justify-content: center;
   grid-template-columns: repeat(auto-fill, 316px);
   column-gap: 4px;
@@ -211,6 +211,29 @@ label {
   margin-left: 3px;
 }
 
+/* Tables */
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+  margin: 8px 0;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+tr:hover {
+  background-color: aliceblue;
+}
+
+/* Smaller screens responsiveness */
 @media screen and (max-width: 600px) {
   .buttons {
     display: flex;
