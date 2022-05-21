@@ -40,7 +40,8 @@ async function updateUserRefreshToken(pool, userId, refreshToken) {
 // Get all notes for a user
 async function getNotes(pool, userId) {
   const text = `SELECT uuid, content, date_created, date_due, date_done
-                FROM notes WHERE user_id = $1`;
+                FROM notes WHERE user_id = $1
+                ORDER BY date_done DESC, date_due ASC`;
   const values = [userId];
 
   return await runQuery(pool, text, values, false);
@@ -48,10 +49,10 @@ async function getNotes(pool, userId) {
 
 // Create a new note
 async function createNote(pool, note) {
-  const text = `INSERT INTO notes (content, date_created, user_id)
-                VALUES ($1, $2, $3)
-                RETURNING uuid, content, date_created`;
-  const values = [note.content, note.dateCreated, note.userId];
+  const text = `INSERT INTO notes (content, date_created, user_id, date_due, date_done)
+                VALUES ($1, $2, $3, $4, $5)
+                RETURNING uuid, content, date_created, date_due, date_done`;
+  const values = [note.content, note.dateCreated, note.userId, note.dateDue, note.dateDone];
   return await runQuery(pool, text, values, true);
 }
 

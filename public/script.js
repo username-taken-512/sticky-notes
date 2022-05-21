@@ -160,7 +160,7 @@ function addNote() {
         noteElement.toggleAttribute("disabled");
         dueDateElem.toggleAttribute("disabled");
         finishButton.toggleAttribute("disabled");
-        dateLabel.innerHTML = noteObject.date_done;
+        dateLabelElement.innerHTML = noteObject.date_done;
       }
     }
   });
