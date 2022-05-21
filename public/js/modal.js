@@ -1,10 +1,10 @@
-const modal = document.getElementById("modal");
-const modalContent = document.getElementById("modal-content");
+const modal = document.getElementById("modal"); // Modal container
+const modalContent = document.getElementById("modal-content");  // Contains statistics data
 const userStatsButton = document.getElementById("userstats-button");
 const siteStatsButton = document.getElementById("sitestats-button");
 const modalCloseButton = document.getElementById("modal-close-button");
 
-let chartArray = [];
+let chartArray = [];  // Stores ApexCharts in current use
 
 // Hide modal on click outside
 window.addEventListener('click', event => {
@@ -46,25 +46,13 @@ function hideModal() {
   modalContent.innerHTML = '';
 }
 
-/*
-account_created: "2022-04-15 21:18"
-days_since_creation: 35
-first_name: "jiiiii"
-last_name: "kkkkk"
-notes_avg_length: "9"
-notes_done: "0"
-notes_past_month: "6"
-notes_past_week: "0"
-notes_per_day_past_week: "0.00"
-notes_per_day_since_creation: "0.17"
-notes_total: "6"
-user_id: 4
-username: "jon"
-*/
-
 async function drawUserStatistics() {
   // Get data from Heroku
   const data = await getNotesSummaryFromDb();
+  if (data._error) {
+    modalContent.innerHTML = '<h2>Connection Error</h2><p>Failed to get statistics from server</p>';
+    return;
+  }
 
   // Print statistics
   modalContent.innerHTML = `<h2>User Satistics for ${data.first_name} ${data.last_name}</h2>
@@ -94,7 +82,7 @@ async function drawUserStatistics() {
         <td>Average note length</td>
         <td>${data.notes_avg_length}</td>
       </tr>
-    </table>
+    </table><br>
   `;
 
   // Prepare data and Draw bar chart
@@ -111,6 +99,13 @@ async function drawUserStatistics() {
 
 // Fill modal with Website Statistics
 async function drawSiteStatistics() {
+  // Get data from google (through Heroku backend)
+  const data = await getWebsiteStatistics();
+  if (data._error) {
+    modalContent.innerHTML = '<h2>Connection Error</h2><p>Failed to get statistics from server</p>';
+    return;
+  }
+
   // Create Header and Nodes
   modalContent.innerHTML = `
     <h2>Website Satistics - 30 days</h2><br>
@@ -119,9 +114,6 @@ async function drawSiteStatistics() {
   let osPie = document.createElement('div');
   modalContent.appendChild(browserPie);
   modalContent.appendChild(osPie);
-
-  // Get data from google
-  const data = await getWebsiteStatistics();
 
   // Organize data for charts
   let browserData = {};
@@ -159,8 +151,7 @@ function drawPieChart(div, series, labels, title) {
   return chart;
 }
 
-// drawSingleBarChart(div, series, [data.notes_total], 'Completed notes comparison', ' note', ' notes')
-// Draws Bar Chart in included div 
+// Draws Bar Chart with a single bar in included div 
 function drawSingleBarChart(div, series, xaxisText, title, toolTipSingle = '', toolTipMulti = '') {
   const options = {
     series: series,

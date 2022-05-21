@@ -1,4 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Paytone+One&family=Ubuntu&display=swap');
 @import url("/styles/modal.css");
+/*
+Header:   font-family: 'Paytone One', sans-serif;
+Body:     font-family: 'Ubuntu', sans-serif;
+*/
 
 * {
   box-sizing: border-box;
@@ -7,7 +12,11 @@
 }
 
 body {
-  background: #ffffff;
+  background-image: url("/images/bg.jpg");
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center center;
+  font-family: 'Ubuntu', sans-serif;
 }
 
 .hidden {
@@ -29,9 +38,28 @@ body {
 
 #top {
   display: none;
-  /* display: flex; */
-  background-color: rgb(200, 200, 201);
+  background-color: rgba(254, 234, 250, 0.5);
   justify-content: space-between;
+  border-bottom: solid black 1px;
+}
+
+.logo-title>h1 {
+  flex-grow: 1;
+  align-self: center;
+  font-family: 'Paytone One', sans-serif;
+  color: white;
+  text-shadow: 1px 1px 0 #2374A5, 0 0 1px #2374A5, 0 0 1px #2374A5, 0 0 1px #2374A5;
+  font-size: 40px;
+}
+
+.logo-title>img {
+  width: 64px;
+}
+
+#top>.logo-title {
+  flex-grow: 1;
+  padding: 16px;
+  display: flex;
 }
 
 .note {
@@ -43,7 +71,8 @@ body {
   border-radius: 10px;
   box-shadow: 0 0 7px rgba(0, 0, 0, 0.15);
   resize: none;
-  font-family: sans-serif;
+  /* font-family: sans-serif; */
+  font-family: 'Ubuntu', sans-serif;
   font-size: 16px;
 }
 
@@ -64,10 +93,15 @@ body {
   background: rgba(0, 0, 0, 0.2);
 }
 
+.saveButtonON, .saveButtonOFF, .deleteButton, .finishButton {
+  margin: 1px;
+  background-color: rgba(254, 234, 250, 0.5);
+}
+
 .saveButtonON {
   width: max-content;
   height: max-content;
-  background-color: transparent;
+  /* background-color: transparent; */
   border: 4 solid #e2e8f0;
   border-radius: 1.5rem;
   box-sizing: border-box;
@@ -104,7 +138,6 @@ body {
 .saveButtonOFF {
   width: max-content;
   height: max-content;
-  background-color: transparent;
   border: 2 solid #e2e8f0;
   border-radius: 1.5rem;
   box-sizing: border-box;
@@ -148,7 +181,6 @@ body {
 .deleteButton, .finishButton {
   width: max-content;
   height: max-content;
-  background-color: transparent;
   border: 4 solid #e2e8f0;
   border-radius: 1.5rem;
   box-sizing: border-box;
@@ -193,16 +225,19 @@ body {
 }
 
 .top-button {
+  background-color: rgba(0, 0, 0, 0.05);
   border: 5px black;
   height: 100%;
   color: black;
   text-align: center;
   font-size: 16px;
   padding: 16px 12px;
+  font-family: 'Ubuntu', sans-serif;
 }
 
 .top-button:hover {
-  background-color: blue;
+  /* background-color: blue; */
+  background-color: rgba(254, 234, 250, 0.9);
   cursor: pointer;
 }
 
@@ -234,7 +269,7 @@ tr:hover {
 }
 
 /* Smaller screens responsiveness */
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 700px) {
   .buttons {
     display: flex;
     flex-direction: row;
