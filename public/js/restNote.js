@@ -86,6 +86,7 @@ async function postNoteToDb(note) {
 
 // Update note in db
 async function updateNoteInDb(note) {
+  console.log(">updateNoteInDb>Saving this note to db: ", note)
   let response;
   let result;
   try {
@@ -101,6 +102,7 @@ async function updateNoteInDb(note) {
     console.log(error);
     return { _error: error, _errorCode: 666 };
   }
+  console.log(">updateNoteInDb>Result respone: ", response.status, result)
   return generateReturn(response.status, result);
 }
 

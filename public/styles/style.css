@@ -92,7 +92,7 @@ body {
   background: rgba(0, 0, 0, 0.2);
 }
 
-.deleteButton, .finishButton, .saveButtonON, .saveButtonOFF {
+.deleteButton, .saveButtonON, .saveButtonOFF {
   margin: 1px;
   background-color: rgba(254, 234, 250, 0.5);
   border: 2px solid #e2e8f0;

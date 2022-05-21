@@ -23,10 +23,12 @@ router.get('/notes', async (req, res) => {
 
 // Create new note
 router.post('/notes', async (req, res) => {
+  console.log(req);
   let date = new Date().toLocaleString("sv-SE", { timeZone: "Europe/Stockholm" });
   let note = {
     content: req.body.content,
     dateCreated: date.substring(0, 16),
+    dateDue: req.body.date_due,
     userId: req.user.id
   }
   res.json(await db.createNote(pool, note));
@@ -37,8 +39,8 @@ router.put('/notes/:uuid', async (req, res) => {
   let note = {
     uuid: req.params.uuid,
     content: req.body.content,
-    date_due: req.body.dateDue || null,
-    date_done: req.body.dateDone || null
+    dateDue: req.body.date_due,
+    dateDone: req.body.date_done
   }
   const result = await db.updateNote(pool, note, req.user.id);
 

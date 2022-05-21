@@ -19,34 +19,75 @@ addNoteButton.addEventListener("click", () => addNote());
 
 function dueDateDivHTMLBuilder(date_due, idNote) {
 
-  return `  <input type="date" id="due_date_${idNote}" value=${date_due}>
-  <span></span>
-  <input type="time" id="due_time_${idNote}" value="08:00">`;
+  const dateElem = document.createElement("input");
+  dateElem.setAttribute("type", "date");
+
+  dateElem.setAttribute("type", "time");
+  dateElem.setAttribute("id", idNote);
+  dateElem.setAttribute("value", date_due);
+
+
+  //return `  <input type="date" id="due_date_${idNote}" value=${date_due}>
+  //<span></span>
+  //<input type="time" id="due_time_${idNote}" value="08:00">`;
 }
 
 // Renders a note to the HTML page by creating buttons and putting it inside a new <div/>
 function renderNoteHTML(note) {
+  const idNote = note.id;
   const divForElement = document.createElement("div");
   const saveButton = document.createElement("button");
   const deleteButton = document.createElement("button");
-  const finishButton = document.createElement("button");
+  const finishButton = document.createElement("input");
+  finishButton.setAttribute("type", "checkbox");
   const dateLabel = document.createElement("label");
+  const dueDateDiv = document.createElement('div')
+  const noteElement = createNoteElement(idNote, note.content);
+
   dateLabel.innerHTML = "Not saved.";
   if (!!note.date_created) {
     dateLabel.innerHTML = note.date_created;
   }
-  const dueDateDiv = document.createElement('div')
-  const idNote = note.id;
-  const noteElement = createNoteElement(idNote, note.content);
-  initAppendButtons(saveButton, deleteButton, finishButton, idNote, divForElement, noteElement, dateLabel, dueDateDiv);
+  const dueDateElem = document.createElement("input")
+  dueDateElem.setAttribute("type", "date");
+  dueDateElem.setAttribute("id", idNote);
+  if (note.date_due) {
+    dueDateElem.setAttribute("value", note.date_due);
+  }
+  if (note.date_done) {
+    dateLabel.innerHTML = note.date_done;
+    finishButton.checked = true;
+    dueDateElem.setAttribute("disabled", "true");
+    noteElement.setAttribute("disabled", "true");
+  }
+  initAppendButtons(saveButton, deleteButton, finishButton, idNote, divForElement, noteElement, dateLabel, dueDateDiv, dueDateElem);
   notesContainer.insertBefore(divForElement, addNoteButton);
   saveButton.addEventListener("click", () => {
-    saveButtonClicked(idNote);
+    if (saveButtonClicked(idNote)) {
+      if (finishButton.checked) {
+        noteElement.toggleAttribute("disabled");
+        dueDateElem.toggleAttribute("disabled");
+        finishButton.toggleAttribute("disabled");
+        dateLabel.innerHTML = note.date_done;
+      }
+    }
   });
   deleteButton.addEventListener("click", () => {
     deleteConfirm(idNote);
   });
-  dueDateDiv.innerHTML = dueDateDivHTMLBuilder(note.date_due, idNote);
+
+  dueDateElem.addEventListener("input", () => {
+    console.log(dueDateElem.value)
+    updateNote(note.id, "due_date", dueDateElem.value);
+    addToUnsaved(note.id);
+    toggleSaveButton(note.id, "saveON");
+  })
+
+  if (note.date_due) {
+    dueDateDiv.innerHTML = "This task is due:"
+  } else {
+    dueDateDiv.innerHTML = "Set due date:"
+  }
 }
 
 function getLocalNotes() {
@@ -64,6 +105,8 @@ async function getCloudNotes() {
     noteObject.date_done = note.date_done;
     noteObject.date_due = note.date_due;
     noteObject.uuid = note.uuid;
+
+    console.log("getCloudNote: ", note)
     //noteObject.user_id = note.user_id;
     cloudNotesReturn.push(noteObject);
   });
@@ -82,7 +125,7 @@ function createNoteElement(id, content) {
   element.value = content;
   element.placeholder = "Empty sticky note";
   element.addEventListener("input", () => {
-    updateNote(id, element.value);
+    updateNote(id, "content", element.value);
     addToUnsaved(id);
     toggleSaveButton(id, "saveON");
   });
@@ -100,39 +143,97 @@ function addNote() {
   const noteElement = createNoteElement(idNote, noteObject.content);
   const saveButton = document.createElement("button");
   const deleteButton = document.createElement("button");
-  const finishButton = document.createElement("button");
+  const finishButton = document.createElement("input");
+  finishButton.setAttribute("type", "checkbox");
   const divForElement = document.createElement("div");
   const dateLabelElement = document.createElement("label");
-  const dueDateDivElement = document.createElement("div");
-  dueDateDivElement.innerHTML = dueDateDivHTMLBuilder();
+  const dueDateDiv = document.createElement('div')
   dateLabelElement.innerHTML = "Not saved."
-  initAppendButtons(saveButton, deleteButton, finishButton, idNote, divForElement, noteElement, dateLabelElement, dueDateDivElement);
+  const dueDateElem = document.createElement("input")
+  dueDateElem.setAttribute("type", "date");
+  dueDateElem.setAttribute("id", idNote);
+  initAppendButtons(saveButton, deleteButton, finishButton, idNote, divForElement, noteElement, dateLabelElement, dueDateDiv, dueDateElem);
   notesContainer.insertBefore(divForElement, addNoteButton);
   saveButton.addEventListener("click", () => {
-    saveButtonClicked(idNote);
+    if (saveButtonClicked(idNote)) {
+      if (finishButton.checked) {
+        noteElement.toggleAttribute("disabled");
+        dueDateElem.toggleAttribute("disabled");
+        finishButton.toggleAttribute("disabled");
+        dateLabel.innerHTML = noteObject.date_done;
+      }
+    }
   });
   deleteButton.addEventListener("click", () => {
     deleteConfirm(idNote);
   });
+
+  dueDateElem.addEventListener("input", () => {
+    console.log(dueDateElem.value)
+    updateNote(idNote, "due_date", dueDateElem.value);
+    addToUnsaved(idNote);
+    toggleSaveButton(idNote, "saveON");
+  })
+
+  if (noteObject.date_due) {
+    dueDateDiv.innerHTML = "This task is due:"
+  } else {
+    dueDateDiv.innerHTML = "Set due date:"
+  }
   notes.push(noteObject);
   saveNotes(notes);
 }
 
 // Updates notes when editing and checks if note is already in localStorage or is to be added
-async function updateNote(id, newContent) {
+async function updateNote(id, type, newContent) {
   let notesLocal = getLocalNotes();
   let targetNote = notesLocal.filter((note) => note.id == id)[0];
-  if (targetNote == null) {
-    console.log('if')
-    targetNote = cloudNotes.filter((note) => note.id == id)[0];
-    targetNote.content = newContent;
-    notesLocal.push(targetNote);
-  } else {
-    console.log('else')
-    targetNote.content = newContent;
+
+  console.log("updateNot exxxx", type, newContent);
+
+  if (type === "content") {
+    if (targetNote == null) {
+      console.log('if')
+      targetNote = cloudNotes.filter((note) => note.id == id)[0];
+      targetNote.content = newContent;
+      notesLocal.push(targetNote);
+    } else {
+      console.log('else')
+      targetNote.content = newContent;
+    }
+  } else if (type === "date_done") {
+    if (targetNote == null) {
+      console.log('if date')
+      targetNote = cloudNotes.filter((note) => note.id == id)[0];
+      targetNote.date_done = newContent;
+
+      console.log("targetnote date done: ", targetNote.date_done, newContent)
+
+      notesLocal.push(targetNote);
+    } else {
+      console.log('else date')
+      targetNote.date_done = newContent;
+    }
+  } else if (type === "due_date") {
+    if (targetNote == null) {
+      console.log('if date')
+      targetNote = cloudNotes.filter((note) => note.id == id)[0];
+      targetNote.date_due = newContent;
+
+      console.log("targetnote date done: ", targetNote.date_done, newContent)
+
+      notesLocal.push(targetNote);
+    } else {
+      console.log('else date')
+      targetNote.date_due = newContent;
+    }
   }
+
+  console.log(targetNote);
+
   saveNotes(notesLocal);
 }
+
 
 function removeLocalNote(id) {
   const notes = getLocalNotes().filter((note) => note.id != id);
@@ -184,12 +285,19 @@ function toggleSaveButton(id, toggleTo) {
 async function saveNoteToCloud(note) {
   let result;
   if (!!note.uuid) {
+    console.log(">saveNoteToCloud>Saving this note to cloud:", note)
     result = await updateNoteInDb(note);
+    console.log("this runs");
   } else {
     result = await postNoteToDb(note);
     if (!(!!result._error)) {
+
+      console.log("date_created", result.date_created);
+      console.log("date_done", result.date_done);
+
       note.uuid = result.uuid;
       note.date_created = result.date_created;
+      note.date_done = result.date_done;
       document.getElementById('stickynote_div_' + note.id).getElementsByTagName('label')[0].innerHTML = note.date_created;
       cloudNotes.push(note);
     }
@@ -199,26 +307,20 @@ async function saveNoteToCloud(note) {
 
 async function saveButtonClicked(id) {
   const note = getLocalNotes().find(element => element.id === id);
-  const result = await saveNoteToCloud(note);
+  const result = await saveNoteToCloud(note); console.log(">SaveButtonClicked>Saving this note to cloud:", note)
+  let disabled = false;
   if (!(!!result._error)) {
     removeFromUnsaved(id);
     toggleSaveButton(id, "saveOFF");
     removeLocalNote(id);
-  } else {
-    alert("Note could not be saved to cloud. Try logging in again or check internet connection.");
-  }
-}
 
-async function finishNoteButtonClicked(id) {
-  const note = getLocalNotes().find(element => element.id === id);
-  const result = await saveNoteToCloud(note);
-  if (!(!!result._error)) {
-    removeFromUnsaved(id);
-    toggleSaveButton(id, "saveOFF");
-    removeLocalNote(id);
+    if (note.date_done) {
+      disabled = true;
+    }
   } else {
     alert("Note could not be saved to cloud. Try logging in again or check internet connection.");
   }
+  return disabled;
 }
 
 // Initiates the save button and checks wether it should be enabled/disabled
@@ -246,9 +348,25 @@ function initDeleteButton(deleteButton, idNote) {
 }
 
 function initFinishButton(finishButton, idNote) {
-  finishButton.setAttribute("id", "stickynote_btnFinish_" + idNote);
+  finishButton.setAttribute("id", "stickynote_chbFinish_" + idNote);
   finishButton.className = "finishButton";
-  finishButton.innerHTML = "&#9989";
+  finishButton.innerHTML = `
+  <label for="stickynote_chbFinish_${idNote}">Completed</label>
+  `
+  finishButton.addEventListener("change", () => {
+
+    let date = new Date().toLocaleString("sv-SE", { timeZone: "Europe/Stockholm" })
+
+    if (finishButton.checked) {
+      updateNote(idNote, "date_done", date.substring(0, 16))
+    } else {
+      updateNote(idNote, "date_done", "")
+    }
+
+    addToUnsaved(idNote)
+    toggleSaveButton(idNote, "saveON");
+
+  })
 }
 
 // Method asking for confirmation before deletion
@@ -262,7 +380,7 @@ function deleteConfirm(id) {
 }
 
 // Initiates the buttons and appends them to the <div/>, along with the note
-function initAppendButtons(saveButton, deleteButton, finishButton, idNote, divForElement, noteElement, dateLabel, dueDateDiv) {
+function initAppendButtons(saveButton, deleteButton, finishButton, idNote, divForElement, noteElement, dateLabel, dueDateDiv, dueDateElem) {
   initSaveButton(saveButton, idNote);
   initDeleteButton(deleteButton, idNote);
   initFinishButton(finishButton, idNote);
@@ -276,6 +394,7 @@ function initAppendButtons(saveButton, deleteButton, finishButton, idNote, divFo
     divForElement.appendChild(dateLabel);
   }
   divForElement.appendChild(dueDateDiv)
+  divForElement.appendChild(dueDateElem)
 }
 
 // Add a note to the list of notes that has yet to be saved to the cloud
@@ -325,10 +444,3 @@ async function getAllNotes() {
   Array.prototype.push.apply(localNotes, cloudNotes);
   return localNotes;
 }
-
-// Test to show statistics fetched from backend
-async function test() {
-  console.log(await getNotesSummaryFromDb());
-  console.log(await getWebsiteStatistics());
-}
-test();
