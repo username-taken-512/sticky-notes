@@ -69,13 +69,15 @@ function renderNoteHTML(note) {
 
   initAppendButtons(saveButton, deleteButton, finishButton, idNote, divForElement, noteElement, dateLabel, dueDateDiv, dueDateElem, finishLabel);
   notesContainer.insertBefore(divForElement, addNoteButton);
-  saveButton.addEventListener("click", () => {
-    if (saveButtonClicked(idNote)) {
+  saveButton.addEventListener("click", async () => {
+    if (await saveButtonClicked(idNote)) {
       if (finishButton.checked) {
-        noteElement.toggleAttribute("disabled");
-        dueDateElem.toggleAttribute("disabled");
-        finishButton.toggleAttribute("disabled");
-        dateLabel.innerHTML = `<span class="date-label">Date Completed: </span><span class="date-value"> ${note.date_done}</span>`;
+        if (!noteElement.getAttribute("disabled")) {
+          noteElement.toggleAttribute("disabled");
+          dueDateElem.toggleAttribute("disabled");
+          finishButton.toggleAttribute("disabled");
+          dateLabel.innerHTML = `<span class="date-label">Date Completed: </span><span class="date-value"> ${note.date_done}</span>`;
+        }
       }
     }
   });
@@ -169,13 +171,15 @@ function addNote() {
 
   initAppendButtons(saveButton, deleteButton, finishButton, idNote, divForElement, noteElement, dateLabelElement, dueDateDiv, dueDateElem, finishLabel);
   notesContainer.insertBefore(divForElement, addNoteButton);
-  saveButton.addEventListener("click", () => {
-    if (saveButtonClicked(idNote)) {
+  saveButton.addEventListener("click", async () => {
+    if (await saveButtonClicked(idNote)) {
       if (finishButton.checked) {
-        noteElement.toggleAttribute("disabled");
-        dueDateElem.toggleAttribute("disabled");
-        finishButton.toggleAttribute("disabled");
-        dateLabelElement.innerHTML = noteObject.date_done;
+        if (!noteElement.getAttribute("disabled")) {
+          noteElement.toggleAttribute("disabled");
+          dueDateElem.toggleAttribute("disabled");
+          finishButton.toggleAttribute("disabled");
+          dateLabelElement.innerHTML = noteObject.date_done;
+        }
       }
     }
   });
@@ -298,6 +302,11 @@ async function saveNoteToCloud(note) {
     console.log(">saveNoteToCloud>Saving this note to cloud:", note)
     result = await updateNoteInDb(note);
     console.log("this runs");
+
+    if (!!result._error) {
+      console.log("error")
+      return false;
+    }
   } else {
     result = await postNoteToDb(note);
     if (!(!!result._error)) {
