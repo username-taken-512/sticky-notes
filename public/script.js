@@ -56,7 +56,7 @@ function renderNoteHTML(note) {
     dueDateElem.setAttribute("value", note.date_due);
   }
   if (note.date_done) {
-    dateLabel.innerHTML = `<span class="date-label">Date Completed: </span><span class="date-value"> ${note.date_done}</span>`;
+    dateLabel.innerHTML = `<span class="date-label">Date CompletedsssXXX: </span><span class="date-value"> ${note.date_done}</span>`;
     finishButton.checked = true;
     finishButton.setAttribute("disabled", "true");
     dueDateElem.setAttribute("disabled", "true");
@@ -77,7 +77,6 @@ function renderNoteHTML(note) {
           noteElement.toggleAttribute("disabled");
           dueDateElem.toggleAttribute("disabled");
           finishButton.toggleAttribute("disabled");
-          dateLabel.innerHTML = `<span class="date-label">Date completed: </span><span class="date-value"> ${note.date_done}</span>`;
         }
       }
     }
