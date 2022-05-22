@@ -27,10 +27,10 @@ function generateReturn(responseStatus, result) {
     case 200:
       return result;
     case 403:
-      console.log('Error sending to db: Not authorized');
+      console.error('Error sending to db: Not authorized');
       return { _error: 'Not authorized', _errorCode: 403 };
     case 500:
-      console.log('Error sending to db: Internal error');
+      console.error('Error sending to db: Internal error');
       return { _error: 'Server error', _errorCode: 500 };
   }
 }
@@ -48,13 +48,12 @@ async function getNotesFromDb(runAgain = true) {
       }
     })).json();
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return { _error: error, _errorCode: 666 }
   }
 
   // If auth error, get new access token, then try again - once
   if (response.status !== 200 && runAgain) {
-    console.log('retry-grejen', response.status, runAgain);
     await checkLoginStatus();
     return getNotesFromDb(false);
   }
@@ -76,17 +75,14 @@ async function postNoteToDb(note) {
       body: JSON.stringify(note)
     })).json();
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return { _error: error, _errorCode: 666 };
   }
-  console.log('response', response);
-  console.log('result', result);
   return generateReturn(response.status, result);
 }
 
 // Update note in db
 async function updateNoteInDb(note) {
-  console.log(">updateNoteInDb>Saving this note to db: ", note)
   let response;
   let result;
   try {
@@ -99,10 +95,9 @@ async function updateNoteInDb(note) {
       body: JSON.stringify(note)
     })).json();
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return { _error: error, _errorCode: 666 };
   }
-  console.log(">updateNoteInDb>Result respone: ", response.status, result)
   return generateReturn(response.status, result);
 }
 
@@ -119,7 +114,7 @@ async function deleteNoteInDb(note) {
       }
     })).json();
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return { _error: error, _errorCode: 666 };
   }
   return generateReturn(response.status, result);
@@ -138,13 +133,12 @@ async function getNotesSummaryFromDb(runAgain = true) {
       }
     })).json();
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return { _error: error, _errorCode: 666 }
   }
 
   // If auth error, get new access token, then try again - once
   if (response.status !== 200 && runAgain) {
-    console.log('retry-grejen', response.status, runAgain);
     await checkLoginStatus();
     return getNotesSummaryFromDb(false);
   }
@@ -164,13 +158,12 @@ async function getWebsiteStatistics(runAgain = true) {
       }
     })).json();
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return { _error: error, _errorCode: 666 }
   }
 
   // If auth error, get new access token, then try again - once
   if (response.status !== 200 && runAgain) {
-    console.log('retry-grejen', response.status, runAgain);
     await checkLoginStatus();
     return getWebsiteStatistics(false);
   }

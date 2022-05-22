@@ -25,11 +25,6 @@ function dueDateDivHTMLBuilder(date_due, idNote) {
   dateElem.setAttribute("type", "time");
   dateElem.setAttribute("id", idNote);
   dateElem.setAttribute("value", date_due);
-
-
-  //return `  <input type="date" id="due_date_${idNote}" value=${date_due}>
-  //<span></span>
-  //<input type="time" id="due_time_${idNote}" value="08:00">`;
 }
 
 // Renders a note to the HTML page by creating buttons and putting it inside a new <div/>
@@ -56,7 +51,7 @@ function renderNoteHTML(note) {
     dueDateElem.setAttribute("value", note.date_due);
   }
   if (note.date_done) {
-    dateLabel.innerHTML = `<span class="date-label">Date CompletedsssXXX: </span><span class="date-value"> ${note.date_done}</span>`;
+    dateLabel.innerHTML = `<span class="date-label">Date Completed: </span><span class="date-value"> ${note.date_done}</span>`;
     finishButton.checked = true;
     finishButton.setAttribute("disabled", "true");
     dueDateElem.setAttribute("disabled", "true");
@@ -86,7 +81,6 @@ function renderNoteHTML(note) {
   });
 
   dueDateElem.addEventListener("input", () => {
-    console.log(dueDateElem.value)
     updateNote(note.id, "due_date", dueDateElem.value);
     addToUnsaved(note.id);
     toggleSaveButton(note.id, "saveON");
@@ -99,7 +93,6 @@ function getLocalNotes() {
 
 async function getCloudNotes() {
   const cloudNotes = await getNotesFromDb();
-  console.log(cloudNotes);
   let cloudNotesReturn = [];
   cloudNotes.forEach((note) => {
     const noteObject = getEmptyNoteObject();
@@ -109,8 +102,6 @@ async function getCloudNotes() {
     noteObject.date_due = note.date_due;
     noteObject.uuid = note.uuid;
 
-    console.log("getCloudNote: ", note)
-    //noteObject.user_id = note.user_id;
     cloudNotesReturn.push(noteObject);
   });
   return cloudNotesReturn;
@@ -181,7 +172,6 @@ function addNote() {
   });
 
   dueDateElem.addEventListener("input", () => {
-    console.log(dueDateElem.value)
     updateNote(idNote, "due_date", dueDateElem.value);
     addToUnsaved(idNote);
     toggleSaveButton(idNote, "saveON");
@@ -196,47 +186,33 @@ async function updateNote(id, type, newContent) {
   let notesLocal = getLocalNotes();
   let targetNote = notesLocal.filter((note) => note.id == id)[0];
 
-  console.log("updateNot exxxx", type, newContent);
-
   if (type === "content") {
     if (targetNote == null) {
-      console.log('if')
       targetNote = cloudNotes.filter((note) => note.id == id)[0];
       targetNote.content = newContent;
       notesLocal.push(targetNote);
     } else {
-      console.log('else')
       targetNote.content = newContent;
     }
   } else if (type === "date_done") {
     if (targetNote == null) {
-      console.log('if date')
       targetNote = cloudNotes.filter((note) => note.id == id)[0];
       targetNote.date_done = newContent;
 
-      console.log("targetnote date done: ", targetNote.date_done, newContent)
-
       notesLocal.push(targetNote);
     } else {
-      console.log('else date')
       targetNote.date_done = newContent;
     }
   } else if (type === "due_date") {
     if (targetNote == null) {
-      console.log('if date')
       targetNote = cloudNotes.filter((note) => note.id == id)[0];
       targetNote.date_due = newContent;
 
-      console.log("targetnote date done: ", targetNote.date_done, newContent)
-
       notesLocal.push(targetNote);
     } else {
-      console.log('else date')
       targetNote.date_due = newContent;
     }
   }
-
-  console.log(targetNote);
 
   saveNotes(notesLocal);
 }
@@ -292,12 +268,8 @@ function toggleSaveButton(id, toggleTo) {
 async function saveNoteToCloud(note) {
   let result;
   if (!!note.uuid) {
-    console.log(">saveNoteToCloud>Saving this note to cloud:", note)
     result = await updateNoteInDb(note);
-    console.log("this runs");
-
     if (!!result._error) {
-      console.log("error")
       return false;
     }
 
@@ -307,10 +279,6 @@ async function saveNoteToCloud(note) {
   } else {
     result = await postNoteToDb(note);
     if (!(!!result._error)) {
-
-      console.log("date_created", result.date_created);
-      console.log("date_done", result.date_done);
-
       note.uuid = result.uuid;
       note.date_created = result.date_created;
       note.date_done = result.date_done;
@@ -328,7 +296,7 @@ async function saveNoteToCloud(note) {
 
 async function saveButtonClicked(id) {
   const note = getLocalNotes().find(element => element.id === id);
-  const result = await saveNoteToCloud(note); console.log(">SaveButtonClicked>Saving this note to cloud:", note)
+  const result = await saveNoteToCloud(note);
   let disabled = false;
   if (!(!!result._error)) {
     removeFromUnsaved(id);
@@ -412,7 +380,6 @@ function initAppendButtons(saveButton, deleteButton, finishButton, idNote, divFo
   divForElement.appendChild(deleteButton);
   divForElement.appendChild(finishLabel);
   divForElement.appendChild(finishButton);
-  console.log("initappendbuttons", dateLabel !== "null")
 
   divForElement.appendChild(dueDateDiv)
   dueDateDiv.appendChild(dueDateElem)
