@@ -1,7 +1,5 @@
 # Sticky Cloud
 
-Cloud course project - Sticky Notes
-
 Cloud course project for the course "Cloud Development for the web" at Kristianstad University
 
 Vanilla JS, Node.js, Express, PostgreSQL, REST API
