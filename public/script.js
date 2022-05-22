@@ -163,12 +163,6 @@ function addNote() {
     dueDateDiv.innerHTML = `<span class="date-label">Set due date:</span>`
   }
 
-  // if (noteObject.date_due) {
-  //   dueDateDiv.innerHTML = "This task is due: "
-  // } else {
-  //   dueDateDiv.innerHTML = "Set due date: "
-  // }
-
   initAppendButtons(saveButton, deleteButton, finishButton, idNote, divForElement, noteElement, dateLabelElement, dueDateDiv, dueDateElem, finishLabel);
   notesContainer.insertBefore(divForElement, addNoteButton);
   saveButton.addEventListener("click", async () => {
@@ -178,7 +172,6 @@ function addNote() {
           noteElement.toggleAttribute("disabled");
           dueDateElem.toggleAttribute("disabled");
           finishButton.toggleAttribute("disabled");
-          dateLabelElement.innerHTML = noteObject.date_done;
         }
       }
     }
@@ -317,7 +310,12 @@ async function saveNoteToCloud(note) {
       note.uuid = result.uuid;
       note.date_created = result.date_created;
       note.date_done = result.date_done;
-      document.getElementById('stickynote_div_' + note.id).getElementsByTagName('span')[1].innerHTML = `<span class="date-label">Date created: </span><span class="date-value"> ${note.date_created}</span>`;
+      if (note.date_done === null || note.date_done === '') {
+        document.getElementById('stickynote_div_' + note.id).getElementsByTagName('span')[1].innerHTML = `<span class="date-label">Date created: </span><span class="date-value"> ${note.date_created}</span>`;
+      } else {
+        document.getElementById('stickynote_div_' + note.id).getElementsByTagName('span')[1].innerHTML = `<span class="date-label">Date completed: </span><span class="date-value"> ${note.date_done}</span>`;
+      }
+
       cloudNotes.push(note);
     }
   }
