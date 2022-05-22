@@ -58,6 +58,7 @@ function renderNoteHTML(note) {
   if (note.date_done) {
     dateLabel.innerHTML = `<span class="date-label">Date Completed: </span><span class="date-value"> ${note.date_done}</span>`;
     finishButton.checked = true;
+    finishButton.setAttribute("disabled", "true");
     dueDateElem.setAttribute("disabled", "true");
     noteElement.setAttribute("disabled", "true");
   }
