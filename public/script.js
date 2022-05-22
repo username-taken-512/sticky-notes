@@ -38,15 +38,16 @@ function renderNoteHTML(note) {
   const divForElement = document.createElement("div");
   const saveButton = document.createElement("button");
   const deleteButton = document.createElement("button");
+  const finishLabel = document.createElement("label");
   const finishButton = document.createElement("input");
   finishButton.setAttribute("type", "checkbox");
-  const dateLabel = document.createElement("label");
+  const dateLabel = document.createElement("span");
   const dueDateDiv = document.createElement('div')
   const noteElement = createNoteElement(idNote, note.content);
 
-  dateLabel.innerHTML = "Not saved.";
+  dateLabel.innerHTML = `<span class="date-label warning">Not saved</span>`;
   if (!!note.date_created) {
-    dateLabel.innerHTML = note.date_created;
+    dateLabel.innerHTML = `<span class="date-label">Date created: </span><span class="date-value"> ${note.date_created}</span>`;
   }
   const dueDateElem = document.createElement("input")
   dueDateElem.setAttribute("type", "date");
@@ -60,7 +61,13 @@ function renderNoteHTML(note) {
     dueDateElem.setAttribute("disabled", "true");
     noteElement.setAttribute("disabled", "true");
   }
-  initAppendButtons(saveButton, deleteButton, finishButton, idNote, divForElement, noteElement, dateLabel, dueDateDiv, dueDateElem);
+  if (note.date_due) {
+    dueDateDiv.innerHTML = `<span class="date-label">This task is due:</span>`
+  } else {
+    dueDateDiv.innerHTML = `<span class="date-label">Set due date:</span>`
+  }
+
+  initAppendButtons(saveButton, deleteButton, finishButton, idNote, divForElement, noteElement, dateLabel, dueDateDiv, dueDateElem, finishLabel);
   notesContainer.insertBefore(divForElement, addNoteButton);
   saveButton.addEventListener("click", () => {
     if (saveButtonClicked(idNote)) {
@@ -82,12 +89,6 @@ function renderNoteHTML(note) {
     addToUnsaved(note.id);
     toggleSaveButton(note.id, "saveON");
   })
-
-  if (note.date_due) {
-    dueDateDiv.innerHTML = "This task is due:"
-  } else {
-    dueDateDiv.innerHTML = "Set due date:"
-  }
 }
 
 function getLocalNotes() {
@@ -143,6 +144,7 @@ function addNote() {
   const noteElement = createNoteElement(idNote, noteObject.content);
   const saveButton = document.createElement("button");
   const deleteButton = document.createElement("button");
+  const finishLabel = document.createElement("label");
   const finishButton = document.createElement("input");
   finishButton.setAttribute("type", "checkbox");
   const divForElement = document.createElement("div");
@@ -152,7 +154,14 @@ function addNote() {
   const dueDateElem = document.createElement("input")
   dueDateElem.setAttribute("type", "date");
   dueDateElem.setAttribute("id", idNote);
-  initAppendButtons(saveButton, deleteButton, finishButton, idNote, divForElement, noteElement, dateLabelElement, dueDateDiv, dueDateElem);
+
+  if (noteObject.date_due) {
+    dueDateDiv.innerHTML = "This task is due: "
+  } else {
+    dueDateDiv.innerHTML = "Set due date: "
+  }
+
+  initAppendButtons(saveButton, deleteButton, finishButton, idNote, divForElement, noteElement, dateLabelElement, dueDateDiv, dueDateElem, finishLabel);
   notesContainer.insertBefore(divForElement, addNoteButton);
   saveButton.addEventListener("click", () => {
     if (saveButtonClicked(idNote)) {
@@ -175,11 +184,6 @@ function addNote() {
     toggleSaveButton(idNote, "saveON");
   })
 
-  if (noteObject.date_due) {
-    dueDateDiv.innerHTML = "This task is due:"
-  } else {
-    dueDateDiv.innerHTML = "Set due date:"
-  }
   notes.push(noteObject);
   saveNotes(notes);
 }
@@ -347,12 +351,13 @@ function initDeleteButton(deleteButton, idNote) {
   deleteButton.innerHTML = "&#128465";
 }
 
-function initFinishButton(finishButton, idNote) {
+function initFinishButton(finishButton, idNote, finishLabel) {
   finishButton.setAttribute("id", "stickynote_chbFinish_" + idNote);
   finishButton.className = "finishButton";
-  finishButton.innerHTML = `
-  <label for="stickynote_chbFinish_${idNote}">Completed</label>
-  `
+  finishLabel.classList.add('completed-label');
+  finishLabel.setAttribute('for', 'stickynote_chbFinish_${idNote}');
+  finishLabel.innerText = 'Completed';
+
   finishButton.addEventListener("change", () => {
 
     let date = new Date().toLocaleString("sv-SE", { timeZone: "Europe/Stockholm" })
@@ -380,21 +385,23 @@ function deleteConfirm(id) {
 }
 
 // Initiates the buttons and appends them to the <div/>, along with the note
-function initAppendButtons(saveButton, deleteButton, finishButton, idNote, divForElement, noteElement, dateLabel, dueDateDiv, dueDateElem) {
+function initAppendButtons(saveButton, deleteButton, finishButton, idNote, divForElement, noteElement, dateLabel, dueDateDiv, dueDateElem, finishLabel) {
   initSaveButton(saveButton, idNote);
   initDeleteButton(deleteButton, idNote);
-  initFinishButton(finishButton, idNote);
+  initFinishButton(finishButton, idNote, finishLabel);
   divForElement.setAttribute("id", "stickynote_div_" + idNote);
   divForElement.appendChild(noteElement);
   divForElement.appendChild(saveButton);
   divForElement.appendChild(deleteButton);
+  divForElement.appendChild(finishLabel);
   divForElement.appendChild(finishButton);
   console.log("initappendbuttons", dateLabel !== "null")
+
+  divForElement.appendChild(dueDateDiv)
+  dueDateDiv.appendChild(dueDateElem)
   if (dateLabel !== "Not saved.") {
     divForElement.appendChild(dateLabel);
   }
-  divForElement.appendChild(dueDateDiv)
-  divForElement.appendChild(dueDateElem)
 }
 
 // Add a note to the list of notes that has yet to be saved to the cloud
