@@ -76,7 +76,7 @@ function renderNoteHTML(note) {
           noteElement.toggleAttribute("disabled");
           dueDateElem.toggleAttribute("disabled");
           finishButton.toggleAttribute("disabled");
-          dateLabel.innerHTML = `<span class="date-label">Date Completed: </span><span class="date-value"> ${note.date_done}</span>`;
+          dateLabel.innerHTML = `<span class="date-label">Date completed: </span><span class="date-value"> ${note.date_done}</span>`;
         }
       }
     }
@@ -300,6 +300,10 @@ async function saveNoteToCloud(note) {
       console.log("error")
       return false;
     }
+
+    if (note.date_done !== null && note.date_done !== undefined && note.date_done !== '') {
+      document.getElementById('stickynote_div_' + note.id).getElementsByTagName('span')[1].innerHTML = `<span class="date-label">Date completed: </span><span class="date-value"> ${note.date_done}</span>`;
+    }
   } else {
     result = await postNoteToDb(note);
     if (!(!!result._error)) {
@@ -310,7 +314,7 @@ async function saveNoteToCloud(note) {
       note.uuid = result.uuid;
       note.date_created = result.date_created;
       note.date_done = result.date_done;
-      if (note.date_done === null || note.date_done === '') {
+      if (note.date_done === null || note.date_done === undefined || note.date_done === '') {
         document.getElementById('stickynote_div_' + note.id).getElementsByTagName('span')[1].innerHTML = `<span class="date-label">Date created: </span><span class="date-value"> ${note.date_created}</span>`;
       } else {
         document.getElementById('stickynote_div_' + note.id).getElementsByTagName('span')[1].innerHTML = `<span class="date-label">Date completed: </span><span class="date-value"> ${note.date_done}</span>`;
