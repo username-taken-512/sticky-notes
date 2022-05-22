@@ -60,7 +60,11 @@ router.delete('/notes/:uuid', async (req, res) => {
 
 // Returns notes summary statistics for the user
 router.get('/notes/summary', async (req, res) => {
-  res.json(await db.getNotesSummary(pool, req.user.id));
+  let data = await db.getNotesSummary(pool, req.user.id);
+  if (data === undefined) {
+    data = { _empty: 'no data' }
+  }
+  res.json(data);
 });
 
 // Returns GA site statistics - all

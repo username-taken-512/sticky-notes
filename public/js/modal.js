@@ -52,10 +52,13 @@ async function drawUserStatistics() {
   if (data._error) {
     modalContent.innerHTML = '<h2>Connection Error</h2><p>Failed to get statistics from server</p>';
     return;
+  } else if (data._empty) {
+    modalContent.innerHTML = '<h2>User Statistics</h2><p>No notes data stored on the server for this account</p>';
+    return;
   }
 
   // Print statistics
-  modalContent.innerHTML = `<h2>User Satistics for ${data.first_name} ${data.last_name}</h2>
+  modalContent.innerHTML = `<h2>User Statistics for ${data.first_name} ${data.last_name}</h2>
     <p>Account created ${data.days_since_creation} days ago (${data.account_created})</p><br>
     <table>
       <tr>
@@ -108,7 +111,7 @@ async function drawSiteStatistics() {
 
   // Create Header and Nodes
   modalContent.innerHTML = `
-    <h2>Website Satistics - 30 days</h2><br>
+    <h2>Website Statistics - 30 days</h2><br>
   `;
   let browserPie = document.createElement('div');
   let osPie = document.createElement('div');
