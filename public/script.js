@@ -56,7 +56,7 @@ function renderNoteHTML(note) {
     dueDateElem.setAttribute("value", note.date_due);
   }
   if (note.date_done) {
-    dateLabel.innerHTML = note.date_done;
+    dateLabel.innerHTML = `<span class="date-label">Date Completed: </span><span class="date-value"> ${note.date_done}</span>`;
     finishButton.checked = true;
     dueDateElem.setAttribute("disabled", "true");
     noteElement.setAttribute("disabled", "true");
@@ -75,7 +75,7 @@ function renderNoteHTML(note) {
         noteElement.toggleAttribute("disabled");
         dueDateElem.toggleAttribute("disabled");
         finishButton.toggleAttribute("disabled");
-        dateLabel.innerHTML = note.date_done;
+        dateLabel.innerHTML = `<span class="date-label">Date Completed: </span><span class="date-value"> ${note.date_done}</span>`;
       }
     }
   });
@@ -148,18 +148,24 @@ function addNote() {
   const finishButton = document.createElement("input");
   finishButton.setAttribute("type", "checkbox");
   const divForElement = document.createElement("div");
-  const dateLabelElement = document.createElement("label");
+  const dateLabelElement = document.createElement("span");
   const dueDateDiv = document.createElement('div')
-  dateLabelElement.innerHTML = "Not saved."
+  dateLabelElement.innerHTML = `<span class="date-label warning">Not saved</span>`;
   const dueDateElem = document.createElement("input")
   dueDateElem.setAttribute("type", "date");
   dueDateElem.setAttribute("id", idNote);
 
   if (noteObject.date_due) {
-    dueDateDiv.innerHTML = "This task is due: "
+    dueDateDiv.innerHTML = `<span class="date-label">This task is due:</span>`
   } else {
-    dueDateDiv.innerHTML = "Set due date: "
+    dueDateDiv.innerHTML = `<span class="date-label">Set due date:</span>`
   }
+
+  // if (noteObject.date_due) {
+  //   dueDateDiv.innerHTML = "This task is due: "
+  // } else {
+  //   dueDateDiv.innerHTML = "Set due date: "
+  // }
 
   initAppendButtons(saveButton, deleteButton, finishButton, idNote, divForElement, noteElement, dateLabelElement, dueDateDiv, dueDateElem, finishLabel);
   notesContainer.insertBefore(divForElement, addNoteButton);
@@ -302,7 +308,7 @@ async function saveNoteToCloud(note) {
       note.uuid = result.uuid;
       note.date_created = result.date_created;
       note.date_done = result.date_done;
-      document.getElementById('stickynote_div_' + note.id).getElementsByTagName('label')[0].innerHTML = note.date_created;
+      document.getElementById('stickynote_div_' + note.id).getElementsByTagName('span')[1].innerHTML = `<span class="date-label">Date created: </span><span class="date-value"> ${note.date_created}</span>`;
       cloudNotes.push(note);
     }
   }
